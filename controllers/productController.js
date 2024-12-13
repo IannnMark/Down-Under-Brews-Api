@@ -84,3 +84,14 @@ exports.updateProduct = async (req, res, next) => {
         next(error);
     }
 }
+
+
+exports.getAdminProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find({ isDeleted: false });
+
+        res.status(200).json(products);
+    } catch (error) {
+        next(error);
+    }
+}
