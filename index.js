@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary");
 const authRoutes = require("./routes/auth");
+const productRoutes = require("./routes/product");
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.listen(port, () => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/product", productRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
