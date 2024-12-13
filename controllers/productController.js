@@ -25,3 +25,18 @@ exports.createProduct = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.deleteProduct = async (req, res, next) => {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+        return next(errorHandler(404, "Product not found"));
+    }
+    try {
+        await Product.findByIdAndDelete(req.params.id);
+        return res.status(200).json("Product has been deleted")
+    } catch (error) {
+        next(error);
+    }
+}
+
