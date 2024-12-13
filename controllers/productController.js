@@ -108,3 +108,40 @@ exports.getSingleProduct = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.getProducts = async (req, res, next) => {
+    try {
+        const limit = parseInt(req.query.limit) || 9;
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        let availability = req.query.availability;
+
+        if (availability === undefined || availability === "false") {
+            availability = { $in: [false, true] };
+        }
+
+        const searchTerm = req.query.searchTerm || '';
+
+        const sort = req.query.sort || "createdAt";
+        const order = req.query.order || "desc";
+
+        const products = await Product.find({
+            $or: [
+                { name: { $regex: searchTerm, $options: 'i' } },
+                { description: { $regex: searchTerm, $options: 'i' } },
+                { category: { $regex: searchTerm, $options: 'i' } },
+                { origin: { $regex: searchTerm, $options: 'i' } },
+                { roastLevel: { $regex: searchTerm, $options: 'i' } },
+                { processingMethod: { $regex: searchTerm, $options: 'i' } },
+                { harvestSeason: { $regex: searchTerm, $options: 'i' } },
+                { certifications: { $regex: searchTerm, $options: 'i' } },
+            ],
+            availability,
+        }).sort(
+            { [sort]: order }
+        ).limit(limit).skip(startIndex);
+
+        return res.status(200).json(products);
+    } catch (error) {
+        next(error);
+    }
+}
