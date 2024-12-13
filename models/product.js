@@ -9,6 +9,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    category: {
+        type: String,
+        required: true,
+    },
     origin: {
         type: String,
         required: true,
