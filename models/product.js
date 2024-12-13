@@ -23,7 +23,12 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     availableWeights: {
-        type: [String],
+        type: [
+            {
+                weight: { type: String, required: true },
+                stock: { type: Number, required: true, min: 0 },
+            },
+        ],
         required: true,
     },
     availability: {
