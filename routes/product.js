@@ -1,6 +1,6 @@
 const express = require("express");
 const upload = require("../utils/multer");
-const { createProduct, deleteProduct, updateProduct, getAdminProducts, getSingleProduct } = require("../controllers/productController.js");
+const { createProduct, deleteProduct, updateProduct, getAdminProducts, getSingleProduct, getProducts } = require("../controllers/productController.js");
 const { verifyToken, authorizeRoles } = require("../utils/verifyUser.js");
 const router = express.Router();
 
@@ -9,6 +9,6 @@ router.delete("/admin/product/delete/:id", verifyToken, authorizeRoles("admin"),
 router.put("/admin/product/update/:id", verifyToken, authorizeRoles("admin"), updateProduct);
 router.get("/admin/products", verifyToken, authorizeRoles("admin"), getAdminProducts);
 router.get("/admin/product/:id", verifyToken, authorizeRoles("admin"), getSingleProduct);
-
+router.get("/get/products", getProducts);
 
 module.exports = router;
