@@ -6,25 +6,29 @@ exports.createProduct = async (req, res, next) => {
     try {
         let imagesLinks = [];
 
+
         if (req.files && req.files.length > 0) {
             for (const file of req.files) {
                 const result = await cloudinary.v2.uploader.upload(file.path, {
                     folder: "Products",
                 });
-                imagesLinks.push({
-                    url: result.secure_url,
-                });
+                imagesLinks.push({ url: result.secure_url });
             }
         }
 
         req.body.imageUrls = imagesLinks;
+
+
+        if (req.body.availableWeights) {
+            req.body.availableWeights = JSON.parse(req.body.availableWeights);
+        }
 
         const product = await Product.create(req.body);
         return res.status(200).json(product);
     } catch (error) {
         next(error);
     }
-}
+};
 
 exports.deleteProduct = async (req, res, next) => {
     const product = await Product.findById(req.params.id);
