@@ -22,14 +22,11 @@ const productSchema = new mongoose.Schema({
         enum: ["Light", "Medium", "Dark"],
         required: true,
     },
-    price: {
-        type: Number,
-        required: true,
-    },
     availableWeights: [
         {
             weight: { type: String, required: true },
             stock: { type: Number, required: true },
+            price: { type: Number, required: true },
         },
     ],
     availability: {
