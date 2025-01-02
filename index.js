@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const cloudinary = require("cloudinary");
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/product");
+const cors = require("cors");
 
 dotenv.config();
 
