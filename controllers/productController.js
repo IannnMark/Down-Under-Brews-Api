@@ -215,3 +215,16 @@ exports.restoreProduct = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.getAdminArchivedProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find({ isDeleted: true });
+
+        res.status(200).json({
+            success: true,
+            products,
+        })
+    } catch (error) {
+        next(error);
+    }
+}
