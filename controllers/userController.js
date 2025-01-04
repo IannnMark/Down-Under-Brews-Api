@@ -36,3 +36,16 @@ exports.deleteUser = async (req, res, next) => {
         next(error);
     }
 }
+
+
+exports.allUser = async (req, res, next) => {
+    try {
+        const users = await User.find({ isDeleted: false });
+        res.status(200).json({
+            success: true,
+            users,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
