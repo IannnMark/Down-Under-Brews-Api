@@ -113,70 +113,6 @@ exports.getSingleProduct = async (req, res, next) => {
     }
 }
 
-// exports.getProducts = async (req, res, next) => {
-//     try {
-//         const limit = parseInt(req.query.limit) || 9;
-//         const startIndex = parseInt(req.query.startIndex) || 0;
-//         let availability = req.query.availability;
-
-//         if (availability === undefined || availability === "false") {
-//             availability = { $in: [false, true] };
-//         }
-
-//         const searchTerm = req.query.searchTerm || '';
-//         const sort = req.query.sort || "createdAt";
-//         const order = req.query.order || "desc";
-
-
-//         let aggregationPipeline = [
-//             {
-//                 $match: {
-//                     $or: [
-//                         { name: { $regex: searchTerm, $options: 'i' } },
-//                         { description: { $regex: searchTerm, $options: 'i' } },
-//                         { category: { $regex: searchTerm, $options: 'i' } },
-//                         { origin: { $regex: searchTerm, $options: 'i' } },
-//                         { roastLevel: { $regex: searchTerm, $options: 'i' } },
-//                         { processingMethod: { $regex: searchTerm, $options: 'i' } },
-//                         { harvestSeason: { $regex: searchTerm, $options: 'i' } },
-//                         { certifications: { $regex: searchTerm, $options: 'i' } },
-//                     ],
-//                     availability,
-//                 }
-//             },
-//             {
-//                 $addFields: {
-//                     lowestPrice: { $min: "$availableWeights.price" },
-//                 }
-//             },
-//             {
-//                 $sort: {
-//                     lowestPrice: order === 'desc' ? -1 : 1,
-//                 }
-//             },
-//             {
-//                 $skip: startIndex,
-//             },
-//             {
-//                 $limit: limit,
-//             }
-//         ];
-
-
-//         if (sort !== "Price") {
-//             aggregationPipeline.unshift({
-//                 $sort: { [sort]: order === "desc" ? -1 : 1 }
-//             });
-//         }
-
-//         const products = await Product.aggregate(aggregationPipeline);
-
-//         return res.status(200).json(products);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-
 exports.getProducts = async (req, res, next) => {
     try {
         const limit = parseInt(req.query.limit) || 9;
@@ -188,28 +124,55 @@ exports.getProducts = async (req, res, next) => {
         }
 
         const searchTerm = req.query.searchTerm || '';
-
         const sort = req.query.sort || "createdAt";
         const order = req.query.order || "desc";
 
-        const products = await Product.find({
-            $or: [
-                { name: { $regex: searchTerm, $options: 'i' } },
-                { description: { $regex: searchTerm, $options: 'i' } },
-                { category: { $regex: searchTerm, $options: 'i' } },
-                { origin: { $regex: searchTerm, $options: 'i' } },
-                { roastLevel: { $regex: searchTerm, $options: 'i' } },
-                { processingMethod: { $regex: searchTerm, $options: 'i' } },
-                { harvestSeason: { $regex: searchTerm, $options: 'i' } },
-                { certifications: { $regex: searchTerm, $options: 'i' } },
-            ],
-            availability,
-        }).sort(
-            { [sort]: order }
-        ).limit(limit).skip(startIndex);
+
+        let aggregationPipeline = [
+            {
+                $match: {
+                    $or: [
+                        { name: { $regex: searchTerm, $options: 'i' } },
+                        { description: { $regex: searchTerm, $options: 'i' } },
+                        { category: { $regex: searchTerm, $options: 'i' } },
+                        { origin: { $regex: searchTerm, $options: 'i' } },
+                        { roastLevel: { $regex: searchTerm, $options: 'i' } },
+                        { processingMethod: { $regex: searchTerm, $options: 'i' } },
+                        { harvestSeason: { $regex: searchTerm, $options: 'i' } },
+                        { certifications: { $regex: searchTerm, $options: 'i' } },
+                    ],
+                    availability,
+                }
+            },
+            {
+                $addFields: {
+                    lowestPrice: { $min: "$availableWeights.price" },
+                }
+            },
+            {
+                $sort: {
+                    lowestPrice: order === 'desc' ? -1 : 1,
+                }
+            },
+            {
+                $skip: startIndex,
+            },
+            {
+                $limit: limit,
+            }
+        ];
+
+
+        if (sort !== "Price") {
+            aggregationPipeline.unshift({
+                $sort: { [sort]: order === "desc" ? -1 : 1 }
+            });
+        }
+
+        const products = await Product.aggregate(aggregationPipeline);
 
         return res.status(200).json(products);
     } catch (error) {
         next(error);
     }
-}
+};
