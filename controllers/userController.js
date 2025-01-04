@@ -103,3 +103,12 @@ exports.restoreUser = async (req, res, next) => {
         next(error);
     }
 }
+
+
+exports.getAdminArchivedUsers = async (req, res, next) => {
+    const users = await User.find({ isDeleted: true });
+    res.status(200).json({
+        success: true,
+        users,
+    });
+}
