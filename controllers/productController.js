@@ -176,3 +176,23 @@ exports.getProducts = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.archivedProduct = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const product = await Product.findByIdAndUpdate(
+            id,
+            { isDeleted: true, deletedAt: Date() },
+            { new: true }
+        );
+
+        if (!product) {
+            return next(errorHandler(404, "Product not found"));
+        }
+
+        res.status(200).json("Product archived successfully");
+    } catch (error) {
+        next(error);
+    }
+}
