@@ -1,5 +1,5 @@
 const express = require("express");
-const { updateUser, deleteUser, allUsers } = require("../controllers/userController");
+const { updateUser, deleteUser, allUsers, eraseUser } = require("../controllers/userController");
 const { verifyToken, authorizeRoles } = require("../utils/verifyUser");
 
 const router = express.Router();
@@ -7,5 +7,6 @@ const router = express.Router();
 router.put("/update/:id", verifyToken, updateUser);
 router.delete("/delete/:id", verifyToken, deleteUser);
 router.get("/admin/users", verifyToken, authorizeRoles("admin"), allUsers);
+router.get("/admin/delete/:id", verifyToken, authorizeRoles("admin"), eraseUser);
 
 module.exports = router;
