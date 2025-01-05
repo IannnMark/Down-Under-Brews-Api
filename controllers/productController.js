@@ -45,12 +45,23 @@ exports.deleteProduct = async (req, res, next) => {
 }
 
 exports.updateProduct = async (req, res, next) => {
+
     const product = await Product.findById(req.params.id);
 
     if (!product) {
         return next(errorHandler(404, "Product not found"));
     }
+
     try {
+        if (req.body.availableWeights) {
+            try {
+                req.body.availableWeights = JSON.parse(req.body.availableWeights);
+            } catch (err) {
+                console.error("Error parsing availableWeights:", err);
+                return next(errorHandler(400, "Invalid format for availableWeights"));
+            }
+        }
+
         if (req.files && req.files.length > 0) {
             if (product.imageUrls && Array.isArray(product.imageUrls)) {
                 for (const image of product.imageUrls) {
@@ -70,10 +81,9 @@ exports.updateProduct = async (req, res, next) => {
                 });
             }
 
-            res.body.imageUrls = imagesLinks;
+            req.body.imageUrls = imagesLinks;
         } else {
             req.body.imageUrls = product.imageUrls;
-
         }
 
         const updateProduct = await Product.findByIdAndUpdate(
@@ -81,13 +91,13 @@ exports.updateProduct = async (req, res, next) => {
             req.body,
             { new: true }
         );
-
         res.status(200).json(updateProduct);
 
     } catch (error) {
         next(error);
     }
-}
+};
+
 
 
 exports.getAdminProducts = async (req, res, next) => {
