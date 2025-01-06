@@ -152,6 +152,7 @@ exports.getProducts = async (req, res, next) => {
                         { certifications: { $regex: searchTerm, $options: 'i' } },
                     ],
                     availability,
+                    isDeleted: { $ne: true },
                 }
             },
             {
